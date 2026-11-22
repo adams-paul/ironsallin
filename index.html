@@ -4,183 +4,321 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Irons All In</title>
+  
+  <!-- Universal font loaded across all devices -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
+    /* Global Page Styles */
     body {
-      background: white;
-      color: black;
-      font-family: Verdana, sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 0 20px;
+      background-color: #FFFDFB;
+      font-family: 'Inter', sans-serif;
+      margin: 20px;
     }
 
-    h1 { font-size: 1.2em; margin-bottom: 4px; }
-
-    .page-desc {
-      font-size: 0.9em;
-      color: #555;
-      margin: 0 0 8px 0;
+    /* Link Colors */
+    a {
+      color: #083460;
     }
 
-    .page-links {
-      font-size: 0.85em;
-      margin: 0 0 24px 0;
+    a:visited {
+      color: #a5cadbff;
     }
 
-    .page-links a {
-      color: black;
-      margin-right: 12px;
+    /* Site title */
+    h1 {
+      color: #6e1c1c;
+      font-weight: 600; /* Semibold */
+      margin-bottom: 12px;
     }
 
-    .item-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    /* Item titles */
+    h2 {
+      color: #6e1c1c;
+      font-weight: 500; /* Medium */
     }
 
-    .item-row {
-      padding: 14px 0;
-      border-bottom: 1px solid #eee;
+    /* Sources heading */
+    h3 {
+      color: #6e1c1c;
+      font-weight: 500; /* Medium */
+      font-size: 1.1em;
+      margin-top: 1.2em;
+      margin-bottom: 0.4em;
     }
 
-    .item-row:first-child {
-      border-top: 1px solid #eee;
+    /* Brackets around the RSS question mark */
+    .rss-help {
+      color: #a5cadbff;
     }
 
-    .item-title {
-      font-size: 0.95em;
-      font-weight: bold;
-      margin: 0 0 4px 0;
+    /* Image sizing (35% of page container width) */
+    img {
+      width: 35%;
+      height: auto;
+      display: block;
     }
 
-    .item-title a {
-      color: black;
-      text-decoration: none;
+    /* Site logo specific styling */
+    .site-logo {
+      margin: 12px 0 16px 0;
     }
 
-    .item-title a:hover {
-      text-decoration: underline;
-    }
-
-    .item-desc {
-      font-size: 0.85em;
-      color: #333;
-      margin: 0 0 6px 0;
-      line-height: 1.5;
-    }
-
-    .item-meta {
-      font-size: 0.8em;
-      color: #666;
-    }
-
-    .item-meta a {
-      color: #666;
-    }
-
-    .item-meta a:hover {
-      color: black;
-    }
-
-    #status {
-      font-size: 0.85em;
-      color: #555;
-      padding: 14px 0;
-    }
-
-    #status.error {
-      color: red;
+    /* Line Dividers */
+    hr {
+      border: none;
+      border-top: 1px solid #a5cadbff;
+      margin: 24px 0;
     }
   </style>
 </head>
 <body>
-  <h1>Irons All In</h1>
-  <p class="page-desc"> </p>
-<p class="page-links">
-  <a href="https://linktr.ee/ironsallin"
-     target="_blank"
-     rel="noopener noreferrer">
-     Links
-  </a>
-</p>
 
-  <ul class="item-list" id="itemList">
-    <li id="status">Loading...</li>
-  </ul>
+  <header>
+    <h1>Irons All In</h1>
+    <img src="https://raw.githubusercontent.com/adams-paul/ironsallin/main/iai%20logo.png" alt="Irons All In Logo" class="site-logo">
+    <p><a href="https://linktr.ee/ironsallin">Links</a></p>
+    <p>
+      <a href="https://feedserve.adams-paul.workers.dev/ironsallin">RSS</a> 
+      <span class="rss-help">(<a href="https://pauladams.neocities.org/articles/wtf-is-an-rss-feed" target="_blank" rel="noopener noreferrer">?</a>)</span>
+    </p>
+  </header>
+
+  <hr>
+
+  <main id="feed-container">
+    <p id="status">Loading...</p>
+  </main>
 
   <script>
-    const FEED_URL = 'https://feedserve.adams-paul.workers.dev/IAI-blog-test?format=json';
-    const MAX_ITEMS = 20;
+    const PRIMARY_URL = 'https://feedserve.adams-paul.workers.dev/ironsallin?format=json';
+    const FALLBACK_URL = 'https://feedgate.adams-paul.workers.dev/ironsallin';
 
-    function formatDate(str) {
-      if (!str) return '';
-      const d = new Date(str);
-      if (isNaN(d)) return '';
-      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
-    function stripHtml(str) {
-      if (!str) return '';
-      return str.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-    }
-
-    async function loadFeed() {
-      const statusEl = document.getElementById('status');
-      const listEl = document.getElementById('itemList');
-
-      try {
-        const res = await fetch(FEED_URL);
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-
-        const items = (data.items || []).slice(0, MAX_ITEMS);
-
-        if (items.length === 0) {
-          statusEl.textContent = 'No items found.';
-          return;
-        }
-
-        listEl.innerHTML = '';
-
-        items.forEach(it => {
-          const title = it.title || 'No title';
-          const link = it.link || it.url || '#';
-          const desc = stripHtml(it.description || it.summary || '');
-          const date = formatDate(it.pubDate || it.date_published);
-          const source = it.sourceTitle || '';
-
-          const li = document.createElement('li');
-          li.className = 'item-row';
-
-          const metaParts = [];
-          if (date) metaParts.push(`<span>${date}</span>`);
-          if (source) metaParts.push(`<a href="${escHtml(link)}" target="_blank" rel="noopener noreferrer">${escHtml(source)}</a>`);
-
-          li.innerHTML = `
-            <p class="item-title"><a href="${escHtml(link)}" target="_blank" rel="noopener noreferrer">${escHtml(title)}</a></p>
-            ${desc ? `<p class="item-desc">${escHtml(desc)}</p>` : ''}
-            ${metaParts.length ? `<p class="item-meta">${metaParts.join(' · ')}</p>` : ''}
-          `;
-
-          listEl.appendChild(li);
-        });
-
-      } catch (err) {
-        statusEl.className = 'error';
-        statusEl.textContent = 'Failed to load feed. ' + err.message;
-      }
+    function cleanTitle(str) {
+      return String(str || 'No Title')
+        .replace(/[\p{Extended_Pictographic}\u200d\ufe0f]/gu, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
     }
 
     function escHtml(str) {
       return String(str || '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+        .replace(/>/g, '&gt;');
+    }
+
+    function linkify(str) {
+      return escHtml(str).replace(
+        /(https?:\/\/[^\s<]+)/g,
+        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+      );
+    }
+
+    // Formats body text, puts 'Sources' in h3, and places URLs on a new line after the source name
+    function formatContent(rawHtml) {
+      if (!rawHtml) return '';
+
+      // Clean tags while preserving text
+      let text = String(rawHtml)
+        .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, ' ')
+        .replace(/<(script|style|title)[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<[^>]*>/g, ' ');
+
+      // Normalize spaces
+      text = text.replace(/[ \t]+/g, ' ').trim();
+
+      // Check for "Sources"
+      const sourcesMatch = text.match(/\bSources\b[:\s]*/i);
+
+      let bodyText = text;
+      let sourcesSection = '';
+
+      if (sourcesMatch) {
+        bodyText = text.substring(0, sourcesMatch.index).trim();
+        sourcesSection = text.substring(sourcesMatch.index + sourcesMatch[0].length).trim();
+      }
+
+      let html = `<p>${linkify(bodyText)}</p>`;
+
+      if (sourcesSection) {
+        html += `<h3>Sources</h3>`;
+
+        // Regex captures: Group 1 = Source Name, Group 2 = URL
+        const sourceRegex = /((?:(?!https?:\/\/)[^])*?)\s*(https?:\/\/[^\s<]+)/gi;
+        const sourceItems = [];
+        let match;
+
+        while ((match = sourceRegex.exec(sourcesSection)) !== null) {
+          const name = match[1].trim();
+          const url = match[2].trim();
+          if (!url) continue;
+
+          if (name) {
+            // Source name, line break, then clickable URL
+            sourceItems.push(`<p>${escHtml(name)}<br><a href="${escHtml(url)}" target="_blank" rel="noopener noreferrer">${escHtml(url)}</a></p>`);
+          } else {
+            sourceItems.push(`<p><a href="${escHtml(url)}" target="_blank" rel="noopener noreferrer">${escHtml(url)}</a></p>`);
+          }
+        }
+
+        if (sourceItems.length > 0) {
+          html += sourceItems.join('');
+        } else {
+          html += `<p>${linkify(sourcesSection).replace(/\n+/g, '<br>')}</p>`;
+        }
+      }
+
+      return html;
+    }
+
+    function extractImage(item, rawHtml) {
+      if (item && (item.imageUrl || item.image || item.thumbnail)) {
+        return item.imageUrl || item.image || item.thumbnail;
+      }
+      if (rawHtml) {
+        const match = rawHtml.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if (match && match[1]) return match[1];
+      }
+      return '';
+    }
+
+    function formatDate(str) {
+      if (!str) return '';
+      const d = new Date(str);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('en-GB', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      });
+    }
+
+    async function fetchFeedData() {
+      // 1. Try FeedServe JSON
+      try {
+        const res = await fetch(PRIMARY_URL);
+        if (res.ok) {
+          const text = await res.text();
+          if (text.trim().startsWith('{') || text.trim().startsWith('[')) {
+            const data = JSON.parse(text);
+            const items = Array.isArray(data) ? data : (data.items || []);
+            if (items.length > 0) return { type: 'json', items };
+          }
+        }
+      } catch (e) {
+        console.warn('Primary fetch failed, using fallback feed...', e);
+      }
+
+      // 2. Fallback to FeedGate
+      const fallbackRes = await fetch(FALLBACK_URL);
+      if (!fallbackRes.ok) throw new Error('HTTP ' + fallbackRes.status + ' from fallback feed');
+      const text = await fallbackRes.text();
+      return { type: 'xml', text };
+    }
+
+    async function loadFeed() {
+      const container = document.getElementById('feed-container');
+
+      try {
+        const feedData = await fetchFeedData();
+        let items = [];
+
+        if (feedData.type === 'json') {
+          items = feedData.items.map(it => {
+            const rawHtml = it.content_html || it.content || it.summary || it.description || '';
+            return {
+              title: cleanTitle(it.title),
+              date: formatDate(it.date_published || it.pubDate),
+              image: extractImage(it, rawHtml),
+              rawContent: rawHtml
+            };
+          });
+        } else {
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(feedData.text, 'text/xml');
+          const entries = xml.querySelectorAll('item, entry');
+
+          entries.forEach(entry => {
+            const rawTitle = entry.querySelector('title')?.textContent || '';
+            const rawDate = entry.querySelector('pubDate, published, updated, date')?.textContent || '';
+            
+            const rawContent = 
+              entry.getElementsByTagName('content:encoded')[0]?.textContent ||
+              entry.querySelector('content')?.textContent ||
+              entry.querySelector('description')?.textContent || '';
+
+            const mediaTag = entry.querySelector('media\\:content, content, enclosure[type*="image"]');
+            const mediaThumb = entry.querySelector('media\\:thumbnail');
+            let imgUrl = mediaTag?.getAttribute('url') || mediaThumb?.getAttribute('url') || '';
+            
+            if (!imgUrl) {
+              imgUrl = extractImage(null, rawContent);
+            }
+
+            items.push({
+              title: cleanTitle(rawTitle),
+              date: formatDate(rawDate),
+              image: imgUrl,
+              rawContent: rawContent
+            });
+          });
+        }
+
+        if (items.length === 0) {
+          container.innerHTML = '<p>No items found.</p>';
+          return;
+        }
+
+        container.innerHTML = '';
+
+        items.forEach(item => {
+          const article = document.createElement('article');
+
+          // Title
+          const heading = document.createElement('h2');
+          heading.textContent = item.title;
+          article.appendChild(heading);
+
+          // Date
+          if (item.date) {
+            const dateP = document.createElement('p');
+            dateP.textContent = item.date;
+            article.appendChild(dateP);
+          }
+
+          // Image
+          if (item.image) {
+            const imgP = document.createElement('p');
+            const img = document.createElement('img');
+            img.src = item.image;
+            img.alt = item.title;
+            imgP.appendChild(img);
+            article.appendChild(imgP);
+          }
+
+          // Content with 'Sources' in <h3> and URLs below source name
+          if (item.rawContent) {
+            const contentDiv = document.createElement('div');
+            contentDiv.innerHTML = formatContent(item.rawContent);
+            article.appendChild(contentDiv);
+          }
+
+          article.appendChild(document.createElement('hr'));
+          container.appendChild(article);
+        });
+
+      } catch (err) {
+        container.innerHTML = '<p>Failed to load feed: ' + err.message + '</p>';
+      }
     }
 
     loadFeed();
   </script>
+
 </body>
 </html>
