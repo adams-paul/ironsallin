@@ -18,6 +18,12 @@
       margin: 20px;
     }
 
+    /* Wrap long URLs on mobile so they don't stretch the screen */
+    p, a {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
     /* Link Colors */
     a {
       color: #083460;
@@ -78,7 +84,12 @@
 
   <header>
     <h1>Irons All In</h1>
-    <img src="https://raw.githubusercontent.com/adams-paul/ironsallin/main/iai%20logo.png" alt="Irons All In Logo" class="site-logo">
+    <!-- Works in AI Studio preview and directly on live GitHub Pages -->
+    <img 
+      src="iai-logo.png" 
+      onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='https://raw.githubusercontent.com/adams-paul/ironsallin/main/iai-logo.png';}else if(this.dataset.tried==1){this.dataset.tried=2;this.src='https://raw.githubusercontent.com/adams-paul/ironsallin/master/iai-logo.png';}" 
+      alt="Irons All In Logo" 
+      class="site-logo">
     <p><a href="https://linktr.ee/ironsallin">Links</a></p>
     <p>
       <a href="https://feedserve.adams-paul.workers.dev/ironsallin">RSS</a> 
