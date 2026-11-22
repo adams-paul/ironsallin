@@ -60,15 +60,16 @@
       color: #a5cadbff;
     }
 
-    /* Image sizing (35% of page container width) */
+    /* Post image sizing (35% of page container width) */
     img {
       width: 35%;
       height: auto;
       display: block;
     }
 
-    /* Site logo specific styling */
+    /* Logo sizing: half the size of post images (17.5%) */
     .site-logo {
+      width: 17.5%;
       margin: 12px 0 16px 0;
     }
 
@@ -84,7 +85,6 @@
 
   <header>
     <h1>Irons All In</h1>
-    <!-- Works in AI Studio preview and directly on live GitHub Pages -->
     <img 
       src="iai-logo.png" 
       onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='https://raw.githubusercontent.com/adams-paul/ironsallin/main/iai-logo.png';}else if(this.dataset.tried==1){this.dataset.tried=2;this.src='https://raw.githubusercontent.com/adams-paul/ironsallin/master/iai-logo.png';}" 
