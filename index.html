@@ -119,7 +119,7 @@
       );
     }
 
-    // Formats body text, puts 'Sources' in h3, and places URLs on a new line after the source name
+    // Formats body text, puts 'Sources' in h3, and renders source names as clickable links
     function formatContent(rawHtml) {
       if (!rawHtml) return '';
 
@@ -134,8 +134,8 @@
       // Normalize spaces
       text = text.replace(/[ \t]+/g, ' ').trim();
 
-      // Check for "Sources"
-      const sourcesMatch = text.match(/\bSources\b[:\s]*/i);
+      // Only match "Sources" when directly followed by links (ignores mid-sentence words like "according to sources.")
+      const sourcesMatch = text.match(/\bSources\b\s*:?\s*(?=(?:[^.!?\n\r]+:\s*)?https?:\/\/)/i);
 
       let bodyText = text;
       let sourcesSection = '';
@@ -156,12 +156,13 @@
         let match;
 
         while ((match = sourceRegex.exec(sourcesSection)) !== null) {
-          const name = match[1].trim();
+          // Strip any trailing colons or excess whitespace from the source name
+          let name = match[1].replace(/[:\s]+$/, '').trim();
           const url = match[2].trim();
           if (!url) continue;
 
           if (name) {
-            // Source name as clickable link text
+            // Renders the clean source name (e.g. "The West Ham Way") as the clickable link
             sourceItems.push(`<p><a href="${escHtml(url)}" target="_blank" rel="noopener noreferrer">${escHtml(name)}</a></p>`);
           } else {
             sourceItems.push(`<p><a href="${escHtml(url)}" target="_blank" rel="noopener noreferrer">${escHtml(url)}</a></p>`);
