@@ -94,6 +94,13 @@
       article.has-image .item-image img {
         margin: 0;
       }
+
+      /* Ensure the dividing line spans across both columns below the photo */
+      article.has-image hr {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin: 24px 0 0 0;
+      }
     }
 
     /* Logo sizing: half the size of post images (17.5%) */
@@ -352,8 +359,8 @@
             article.appendChild(contentDiv);
           }
 
-          article.appendChild(document.createElement('hr'));
           container.appendChild(article);
+          container.appendChild(document.createElement('hr'));
         });
 
       } catch (err) {
