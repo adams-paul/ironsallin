@@ -77,8 +77,7 @@
 <body>
 <div style="text-align:right; padding:4px 8px;">
 <a href="https://linktr.ee/ironsallin" target="_blank" rel="noopener noreferrer">Links</a>
-<a href="https://feedserve.adams-paul.workers.dev/ironsallin" target="_blank" rel="noopener noreferrer">RSS</a>
-<span class="rss-help"><a href="https://pauladams.neocities.org/articles/wtf-is-an-rss-feed" target="_blank" rel="noopener noreferrer">(?)</a></span>
+<a href="https://feedserve.adams-paul.workers.dev/ironsallin" target="_blank" rel="noopener noreferrer">RSS</a><span class="rss-help"><a href="https://pauladams.neocities.org/articles/wtf-is-an-rss-feed" target="_blank" rel="noopener noreferrer">(?)</a></span>
 </div>
 
   <header>
@@ -162,8 +161,8 @@
           if (!url) continue;
 
           if (name) {
-            // Source name, line break, then clickable URL
-            sourceItems.push(`<p>${escHtml(name)}<br><a href="${escHtml(url)}" target="_blank" rel="noopener noreferrer">${escHtml(url)}</a></p>`);
+            // Source name as clickable link text
+            sourceItems.push(`<p><a href="${escHtml(url)}" target="_blank" rel="noopener noreferrer">${escHtml(name)}</a></p>`);
           } else {
             sourceItems.push(`<p><a href="${escHtml(url)}" target="_blank" rel="noopener noreferrer">${escHtml(url)}</a></p>`);
           }
