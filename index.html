@@ -53,11 +53,47 @@
       color: #a5cadbff;
     }
 
-    /* Post image sizing (35% of page container width) */
-    img {
-      width: 35%;
+    /* Post images: 100% width on mobile */
+    .item-image img {
+      width: 100%;
       height: auto;
       display: block;
+      margin: 12px 0;
+    }
+
+    /* Desktop layout: 2 columns (Title across top, Left: Date/Content, Right: Image) */
+    @media (min-width: 768px) {
+      article.has-image {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        column-gap: 28px;
+        align-items: start;
+      }
+
+      article.has-image .item-title {
+        grid-column: 1 / -1; /* Spans across both columns */
+      }
+
+      article.has-image .item-date {
+        grid-column: 1;
+        grid-row: 2;
+        margin: 0 0 10px 0;
+      }
+
+      article.has-image .item-content {
+        grid-column: 1;
+        grid-row: 3;
+      }
+
+      article.has-image .item-image {
+        grid-column: 2;
+        grid-row: 2 / span 2; /* Sits on the right column */
+        margin: 0;
+      }
+
+      article.has-image .item-image img {
+        margin: 0;
+      }
     }
 
     /* Logo sizing: half the size of post images (17.5%) */
@@ -281,32 +317,37 @@
 
         items.forEach(item => {
           const article = document.createElement('article');
+          if (item.image) article.classList.add('has-image');
 
           // Title
           const heading = document.createElement('h2');
+          heading.className = 'item-title';
           heading.textContent = item.title;
           article.appendChild(heading);
 
           // Date
           if (item.date) {
             const dateP = document.createElement('p');
+            dateP.className = 'item-date';
             dateP.textContent = item.date;
             article.appendChild(dateP);
           }
 
           // Image
           if (item.image) {
-            const imgP = document.createElement('p');
+            const imgDiv = document.createElement('div');
+            imgDiv.className = 'item-image';
             const img = document.createElement('img');
             img.src = item.image;
             img.alt = item.title;
-            imgP.appendChild(img);
-            article.appendChild(imgP);
+            imgDiv.appendChild(img);
+            article.appendChild(imgDiv);
           }
 
-          // Content with 'Sources' in <h3> and URLs below source name
+          // Content with 'Sources' in <h3> and clickable source names
           if (item.rawContent) {
             const contentDiv = document.createElement('div');
+            contentDiv.className = 'item-content';
             contentDiv.innerHTML = formatContent(item.rawContent);
             article.appendChild(contentDiv);
           }
