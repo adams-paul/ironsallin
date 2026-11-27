@@ -42,12 +42,36 @@
       width: 17.5%;
       margin: 12px 0 16px 0;
     }
+    /* Image size reduced to 75% */
     .post-image {
       width: 100%;
-      max-width: 500px;
+      max-width: 375px;
       height: auto;
       display: block;
-      margin: 20px 0;
+      margin: 16px 0;
+    }
+
+    /* Top section layout */
+    .article-header-grid {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 24px;
+    }
+
+    /* Desktop: 2 columns (Title on left, Image on right) */
+    @media (min-width: 768px) {
+      .article-header-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        column-gap: 32px;
+        align-items: center;
+      }
+      .article-header-grid h1 {
+        margin: 0;
+      }
+      .article-header-grid .post-image {
+        margin: 0 0 0 auto;
+      }
     }
     hr {
       border: none;
@@ -81,9 +105,14 @@
   <hr>
 
   <main>
-    <h1>Vic Watson and the best £50 West Ham ever spent</h1>
-
-    <img src="vic-watson.jpg" alt="Vic Watson" class="post-image">
+    <div class="article-header-grid">
+      <div>
+        <h1>Vic Watson and the best £50 West Ham ever spent</h1>
+      </div>
+      <div>
+        <img src="vic-watson.jpg" alt="Vic Watson" class="post-image">
+      </div>
+    </div>
 
     <h2>Who is West Ham’s all time top scorer?</h2>
     <p>West Ham’s all-time top scorer is Vic Watson, who scored 326 goals during his career with the club, from 1920 to 1935. He is followed by Geoff Hurst with 252 goals, and John Dick and Jimmy Ruffell, both with 166 each.</p>
